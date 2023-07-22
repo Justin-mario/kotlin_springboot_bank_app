@@ -28,4 +28,21 @@ internal class BankServiceTest {
 
 
     }
+
+    @Test
+    fun `should call it's datasource to retrieve a bank with correct account number` () {
+        // Given
+        val accountNumber = "1234"
+        // every { dataSource.retrieveBanks() } returns emptyList()
+
+        //when
+        bankService.getBank(accountNumber)
+
+        //then
+        verify(exactly = 1) {
+            dataSource.retrieveBank(accountNumber)
+        }
+
+
+    }
 }
