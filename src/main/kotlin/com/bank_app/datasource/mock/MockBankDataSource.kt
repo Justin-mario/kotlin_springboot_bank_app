@@ -14,8 +14,7 @@ class MockBankDataSource : BankDataSource {
     override fun retrieveBanks(): Collection<Bank>  = banks
 
     override fun retrieveBank(accountNumber: String): Bank {
-        return banks.firstOrNull { it.accountNumber == accountNumber }
-            ?: throw NoSuchElementException("Could not find bank with account number $accountNumber")
+        return findBank(accountNumber)
     }
 
     override fun addBank(bank: Bank): Bank {
@@ -27,11 +26,21 @@ class MockBankDataSource : BankDataSource {
     }
 
     override fun updateBank(bank: Bank): Bank {
-        val currentBank = banks.firstOrNull { it.accountNumber == bank.accountNumber }
-            ?: throw NoSuchElementException("Could not find bank with account number ${bank.accountNumber}")
-
+        val accountNumber = bank.accountNumber
+        val currentBank = findBank(accountNumber)
         banks.remove(currentBank)
         banks.add(bank)
         return bank
+    }
+
+    override fun deleteBank(accountNumber: String): String {
+        val foundBank = findBank(accountNumber)
+        banks.remove(foundBank)
+        return "bank with account number $accountNumber has been deleted"
+    }
+
+    private fun findBank(accountNumber: String): Bank {
+        return banks.firstOrNull { it.accountNumber == accountNumber }
+             ?: throw NoSuchElementException("Could not find bank with account number $accountNumber")
     }
 }

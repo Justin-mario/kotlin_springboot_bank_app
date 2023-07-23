@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json
 import org.springframework.test.web.servlet.*
 
 
@@ -112,7 +110,7 @@ internal class BankControllerTest @Autowired constructor(
     }
 
     @Nested
-    @DisplayName("POST api/banks")
+    @DisplayName("PATCH api/banks")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class PatchExistingBank {
         @Test
@@ -174,12 +172,38 @@ internal class BankControllerTest @Autowired constructor(
         @Test
         fun `should delete an existing bank` () {
             //given
-            val accountNumber = "1234"
+            val accountNumber = "910"
 
             //when
-            mockMvc.delete("$baseUrl/$accountNumber")
+            val performDeleteRequest = mockMvc.delete("$baseUrl/$accountNumber") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(accountNumber)
+
+            }
+            //then
+            performDeleteRequest
                 .andDo { print() }
-                .andExpect { status { isOk() } }
+                .andExpect { status { isNoContent()} }
+
+            mockMvc.get("$baseUrl/$accountNumber")
+                .andExpect { status { isNotFound() } }
+        }
+
+        @Test
+        fun `should return BAD REQUEST if no bank with given account number` () {
+            //given
+            val invalidBank = "bad request"
+
+            //when
+            val performPatchRequest =   mockMvc.delete("$baseUrl/$invalidBank") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(invalidBank)
+            }
+            //then
+            performPatchRequest
+                .andDo { print() }
+                .andExpect { status { isNotFound() } }
+
         }
     }
 
