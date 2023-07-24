@@ -2,12 +2,13 @@ package com.bank_app.service
 
 import com.bank_app.datasource.BankDataSource
 import com.bank_app.model.Bank
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 
 
 @Service
-class BankService(private val dataSource: BankDataSource) {
+class BankService(@Qualifier("network") private val dataSource: BankDataSource) {
     fun getBanks(): Collection<Bank> = dataSource.retrieveBanks()
     fun getBank(accountNumber: String): Bank = dataSource.retrieveBank(accountNumber)
     fun addBank(bank: Bank): Bank = dataSource.addBank(bank)
