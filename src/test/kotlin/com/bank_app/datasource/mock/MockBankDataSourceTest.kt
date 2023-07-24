@@ -3,9 +3,9 @@ package com.bank_app.datasource.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+
+
 internal class MockBankDataSourceTest {
     private val mockDataSource = MockBankDataSource()
 
